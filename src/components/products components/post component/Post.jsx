@@ -109,8 +109,10 @@ console.log(data)
             <div className="buttons d-flex flex-row mt-5 gap-3">
               <button className="btn btn-outline-dark"><NavLink to="/cart">Buy Now</NavLink></button>
               <button className="btn btn-dark" onClick={() => addToCart(selectedProduct.id)}>
-               Add to Basket {cartItems[selectedProduct.id] > 0 
-               ? <> <FaShoppingCart/> {cartItems[selectedProduct.id]}</> : null}</button>
+                Add to Basket {cartItems.find((item) => item.id === selectedProduct.id)?.quantity > 0
+               ? <><FaShoppingCart/> {cartItems.find((item) => item.id === selectedProduct.id)?.quantity}</>
+               : null}
+              </button>
                <button className="btn btn-outline-dark" onClick={() => addToWishlist(selectedProduct.id)}>Add to Wishlist</button>
             </div>
           </div>
