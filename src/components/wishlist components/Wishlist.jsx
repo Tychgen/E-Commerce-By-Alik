@@ -7,15 +7,10 @@ import { FaLongArrowAltLeft, FaShoppingCart, FaAngleDown, FaPlus, FaMinus } from
 
 const Wishlist = () => {
   const {
-    addToCart,
-    removeFromCart,
     isLoading,
-    cartItems,
-    quantityTotal,
     sortBy,
     sortProducts,
     setSortBy,
-    getTotalCartAmount,
     searchTerm,
     wishlist,
     removeFromWishlist
