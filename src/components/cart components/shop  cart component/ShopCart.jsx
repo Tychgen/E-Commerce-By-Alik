@@ -113,7 +113,7 @@ const ShoppingCart = () => {
 
                         <div className="d-flex justify-content-between mb-4">
                           <p className="mb-2">Total (Incl. taxes)</p>
-                          <p className="mb-2">$15</p>
+                          <p className="mb-2">$200</p>
                         </div>
 
                         <button type="button" className="btn btn-info btn-block btn-lg">
