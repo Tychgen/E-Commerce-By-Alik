@@ -2,11 +2,24 @@ import React from 'react'
 import { NavLink } from 'react-router-dom'
 import "bootstrap/dist/css/bootstrap.min.css"
 import {FaPlus, FaMinus} from "react-icons/fa"
-import './styles/cartItems.css'
+import '../styles/cartItems.css'
+import { addToCart, removeFromCart, selectCartItems, increaseQuantityTotal, decreaseQuantityTotal } from '../store/store'
+import { useDispatch, useSelector } from 'react-redux'
 
-const CartItems = ({product, cartItems, quantityTotal, addToCart, removeFromCart}) => {
+const CartItems = ({product}) => {
+  const dispatch = useDispatch();
+  const cartItems = useSelector(selectCartItems)
+  
+  const handleAddToCart = (id) => {
+    dispatch(addToCart(id));
+    dispatch(increaseQuantityTotal());
+  };
+  
+  const handleRemoveFromCart = (id) => {
+    dispatch(removeFromCart(id));
+    dispatch(decreaseQuantityTotal());
+  };
 
-  console.log(quantityTotal)
   return (
                  <>               
                   <div className="card mb-3">
@@ -23,10 +36,10 @@ const CartItems = ({product, cartItems, quantityTotal, addToCart, removeFromCart
                               <p className="small mb-0">{product.category}</p> 
                             </div>
                             <div className='pe-5 pt-5 me-4'>
-                              <button className='plus' onClick={() => addToCart(product.id)}><FaPlus/></button>
+                              <button className='plus' onClick={() => handleAddToCart(product.id)}><FaPlus/></button>
                             </div>
                             <div className='pe-5 pt-5 me-4'>
-                              <button className='minus' onClick={() => removeFromCart(product.id)}><FaMinus/></button>
+                              <button className='minus' onClick={() => handleRemoveFromCart(product.id)}><FaMinus/></button>
                             </div>
                           </div>
                           <div className="d-flex flex-row align-items-center">
@@ -42,6 +55,7 @@ const CartItems = ({product, cartItems, quantityTotal, addToCart, removeFromCart
                         </div>
                       </div>
                     </div> 
+                  
     </>
   )
 }

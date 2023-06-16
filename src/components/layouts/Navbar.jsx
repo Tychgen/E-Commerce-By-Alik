@@ -1,23 +1,37 @@
 
-import { NavLink, useLocation } from "react-router-dom"
-import {AiOutlineShoppingCart} from "react-icons/ai"
-import { ShopContext } from "../data and function components/shop-context/ShopContext"
-import { useContext} from "react"
-import "bootstrap/dist/css/bootstrap.min.css"
-import  {GiAnubis} from 'react-icons/gi'
-import {FaHeart} from 'react-icons/fa'
-import Loading from "../loading components/Loading"
+import React from "react";
+import { NavLink, useLocation } from "react-router-dom";
+import { AiOutlineShoppingCart } from "react-icons/ai";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { GiAnubis } from "react-icons/gi";
+import { FaHeart } from "react-icons/fa";
+import Loader from "../loader components/Loader";
+import {
+  setSearchTerm,
+  selectSearchTerm,
+  selectQuantityItems,
+} from "../../store/store";
+import { useDispatch, useSelector } from "react-redux";
+import useProducts from "../data and hook components/data hook/useProducts";
 
 const NavBar = () => {
   const location = useLocation();
   const isHomePage = location.pathname === "/home";
-  const isShopCartPage = location.pathname === "/cart"
-  const isWishlisttPage = location.pathname === "/wishlist"
-  const {quantityTotal, products, isLoading, searchTerm, handleSearch} = useContext(ShopContext);
+  const isShopCartPage = location.pathname === "/cart";
+  const isWishlisttPage = location.pathname === "/wishlist";
+  const { isLoading } = useProducts();
+  const dispatch = useDispatch();
+  const searchTerm = useSelector(selectSearchTerm);
+  const quantityTotal = useSelector(selectQuantityItems)
 
-  
+  console.log(quantityTotal)
+  const handleSearch = (event) => {
+    dispatch(setSearchTerm(event.target.value));
+  };
+
+
   if (isLoading) {
-    return <Loading/>;
+    return <Loader />;
   }
 
   return (

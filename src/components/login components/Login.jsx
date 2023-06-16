@@ -1,7 +1,7 @@
 import React, { useState} from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import "./styles/login-page.scss"
-import Loading from '../loading components/Loading';
+import "../../styles/login-page.scss"
+import Loader from '../loader components/Loader';
 import "bootstrap/dist/css/bootstrap.min.css"
 import { FaTwitter, FaGoogle, FaFacebookF } from 'react-icons/fa'
 
@@ -55,7 +55,7 @@ const Login = () => {
     }
 
     if (isLoading) {
-        return <Loading>Welcome {username}</Loading>;
+        return <Loader>Welcome {username}</Loader>;
     }
 
     return (

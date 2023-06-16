@@ -1,9 +1,11 @@
 import { useParams, NavLink } from 'react-router-dom'
-import { useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { ShopContext } from '../../data and function components/shop-context/ShopContext';
-import Loading from '../../loading components/Loading';
+import Loading from '../components/loader components/Loader';
 import {FaShoppingCart, FaLongArrowAltLeft} from 'react-icons/fa'
+import { addToCart, selectCartItems, addToWishlist, setProductsSuccess } from '../store/store';
+import { useDispatch, useSelector } from 'react-redux';
+import useProducts from '../components/data and hook components/data hook/useProducts';
+import { useEffect } from 'react';
 
 
 
@@ -19,20 +21,45 @@ const fetchData = async (id) => {
 };
 
 const Post = () => {
-  const { addToCart, products, cartItems, addToWishlist } = useContext(ShopContext);
+  const {products} = useProducts();
+  const dispatch = useDispatch()
+  const cartItems = useSelector(selectCartItems);
 
 
-  const { id } = useParams();
-  console.log(id)
-  const { isLoading, error, data } = useQuery({
+  const { id } = useParams()
+  const { isLoading, data } = useQuery({
     queryKey: ['projects', id],
     queryFn: () => fetchData(id),
     enabled: !!id,
   })
-  
-
 
   const selectedProduct = data;
+  
+  useEffect(() => {
+    const initializeCartItems = (selectedProduct) => {
+      const cartItems = selectedProduct.map((product) => ({
+        id: product.id,
+        quantity: -1,
+      }));
+    
+      dispatch(addToCart(cartItems));
+    };
+
+    if (!isLoading && products && products.length > 0) {
+      initializeCartItems(products);
+      dispatch(setProductsSuccess(products));
+      dispatch(
+        addToWishlist(
+          products.map((product) => ({
+            id: product.id,
+            isWished: false,
+          }))
+        )
+      );
+    }
+  }, [isLoading, products, dispatch]);
+
+
 
   if (!selectedProduct) {
     return null
@@ -108,12 +135,12 @@ console.log(data)
             </div>
             <div className="buttons d-flex flex-row mt-5 gap-3">
               <button className="btn btn-outline-dark"><NavLink to="/cart">Buy Now</NavLink></button>
-              <button className="btn btn-dark" onClick={() => addToCart(selectedProduct.id)}>
+              <button className="btn btn-dark" onClick={() => dispatch(addToCart(selectedProduct.id))}>
                 Add to Basket {cartItems.find((item) => item.id === selectedProduct.id)?.quantity > 0
                ? <><FaShoppingCart/> {cartItems.find((item) => item.id === selectedProduct.id)?.quantity}</>
                : null}
               </button>
-               <button className="btn btn-outline-dark" onClick={() => addToWishlist(selectedProduct.id)}>Add to Wishlist</button>
+               <button className="btn btn-outline-dark" onClick={() => dispatch(addToWishlist(selectedProduct.id))}>Add to Wishlist</button>
             </div>
           </div>
         </div>

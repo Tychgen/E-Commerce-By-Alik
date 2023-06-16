@@ -1,20 +1,32 @@
-import React, { useContext } from 'react';
+import React, { useState } from 'react';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
-import { ShopContext } from '../data and function components/shop-context/ShopContext';
 import { NavLink } from 'react-router-dom';
-import { FaLongArrowAltLeft, FaShoppingCart, FaAngleDown, FaPlus, FaMinus } from 'react-icons/fa';
+import { FaLongArrowAltLeft, FaAngleDown} from 'react-icons/fa';
+import { selectSearchTerm, selectWishlist, removeFromWishlist } from '../store/store';
+import useProducts from '../components/data and hook components/data hook/useProducts';
+import { useSelector, useDispatch } from 'react-redux';
 
 const Wishlist = () => {
-  const {
-    isLoading,
-    sortBy,
-    sortProducts,
-    setSortBy,
-    searchTerm,
-    wishlist,
-    removeFromWishlist
-  } = useContext(ShopContext);
+  const dispatch = useDispatch();
+  const wishlist = useSelector(selectWishlist);
+  const searchTerm = useSelector(selectSearchTerm)
+  const {isLoading, products} = useProducts();
+  const [sortBy, setSortBy] = useState('price');
+
+  const sortProducts = (sortBy) => {
+    const sortedProducts = [...products];
+    if (sortBy === 'price') {
+      sortedProducts.sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'title') {
+      sortedProducts.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (sortBy === 'quantity') {
+      sortedProducts.sort((a, b) => a.quantity - b.quantity);
+    }
+
+    return sortedProducts;
+  };
+
 
   if (isLoading) {
     return "Loading...";
@@ -78,7 +90,7 @@ const Wishlist = () => {
                                 <button className="btn btn-outline-dark"><NavLink to={`/product/${product.id}`}>Buy Now</NavLink></button>
                               </div>
                               <div className='pe-5 pt-5 me-4'>
-                                <button className='remove h6 btn btn-outline-dark fs-6' onClick={() => removeFromWishlist(product.id)}>Remove from Wishlist</button>
+                                <button className='remove h6 btn btn-outline-dark fs-6' onClick={() => dispatch(removeFromWishlist(product.id))}>Remove from Wishlist</button>
                               </div>
                             </div>
                             <div className="d-flex flex-row align-items-center">

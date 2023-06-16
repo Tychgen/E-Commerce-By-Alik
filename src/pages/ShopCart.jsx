@@ -1,14 +1,48 @@
-import React, { useContext } from 'react';
+import React, { useState } from 'react';
 
-import CartItems from '../cart item component/CartItems';
-import { ShopContext } from '../../data and function components/shop-context/ShopContext';
+import CartItems from './CartItems';
 import { NavLink } from 'react-router-dom';
 import "bootstrap/dist/css/bootstrap.min.css"
 import "bootstrap/dist/js/bootstrap.min.js"
 import { FaLongArrowAltLeft, FaLongArrowAltRight, FaShoppingCart, FaCcMastercard, FaCcVisa, FaCcAmex, FaCcPaypal, FaAngleDown } from "react-icons/fa"
+import useProducts from '../components/data and hook components/data hook/useProducts';
+import { addToCart, removeFromCart, selectCartItems,selectQuantityItems, selectSearchTerm } from '../store/store';
+import { useDispatch, useSelector } from 'react-redux';
 
 const ShoppingCart = () => {
-  const { addToCart, removeFromCart, isLoading, cartItems, quantityTotal, sortBy, sortProducts, setSortBy, getTotalCartAmount, searchTerm } = useContext(ShopContext);
+  const {isLoading, products} = useProducts()
+  const dispatch = useDispatch();
+  const cartItems = useSelector(selectCartItems);
+  const quantityTotal = useSelector(selectQuantityItems);
+  const searchTerm = useSelector(selectSearchTerm)
+  const [sortBy, setSortBy] = useState('price');
+
+  const sortProducts = (sortBy) => {
+    const sortedProducts = [...products];
+    if (sortBy === 'price') {
+      sortedProducts.sort((a, b) => a.price - b.price);
+    } else if (sortBy === 'title') {
+      sortedProducts.sort((a, b) => a.title.localeCompare(b.title));
+    } else if (sortBy === 'quantity') {
+      sortedProducts.sort((a, b) => a.quantity - b.quantity);
+    }
+
+    return sortedProducts;
+  };
+
+
+  const getTotalCartAmount = () => {
+    let totalAmount = products.reduce((acc, product) => {
+      const cartItem = cartItems.find((item) => item.id === product.id);
+      if (cartItem && cartItem.quantity > 0) {
+        return acc + cartItem.quantity * product.price;
+      }
+      return acc;
+    }, 0);
+
+    const roundedTotal = Math.round(totalAmount * 100000) / 100000;
+    return roundedTotal;
+  };
 
   if (isLoading) {
     return "Loading...";
@@ -33,7 +67,7 @@ const ShoppingCart = () => {
                     </h5>
                     <hr />
 
-                    <div className="d-flex justify-content-between align-items-center mb-4">
+                    <div className="d-flex justify-content-between align-items-centereducer mb-4">
                       <div>
                         <p className="mb-1">Your Shopping cart</p>
                         <p className="mb-0"><FaShoppingCart />  {quantityTotal}</p>
@@ -60,7 +94,7 @@ const ShoppingCart = () => {
                       const cartItem = cartItems.find((item) => item.id === product.id);
                       if (cartItem && cartItem.quantity !== 0) {
                         return (
-                          <CartItems key={product.id} product={product} cartItems={cartItems} quantityTotal={quantityTotal} addToCart={addToCart} removeFromCart={removeFromCart} />
+                          <CartItems key={product.id} product={product} />
                         );
                       }
                       return null;
